@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import { GenerateResponse } from "@/types";
 
 interface GeneratorFormProps {
@@ -8,21 +8,33 @@ interface GeneratorFormProps {
 }
 
 export function GeneratorForm({ onGenerate }: GeneratorFormProps) {
+  const [apiKey, setApiKey] = useState("");
   const [theme, setTheme] = useState("");
   const [title, setTitle] = useState("");
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // 从 localStorage 加载 API Key
+  useEffect(() => {
+    const savedApiKey = localStorage.getItem("kie_ai_api_key");
+    if (savedApiKey) {
+      setApiKey(savedApiKey);
+    }
+  }, []);
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    if (!theme.trim() || !title.trim()) {
-      setError("请填写主题和标题");
+    if (!apiKey.trim() || !theme.trim() || !title.trim()) {
+      setError("请填写 API Key、主题和标题");
       return;
     }
 
     setGenerating(true);
     setError(null);
+
+    // 保存 API Key 到 localStorage
+    localStorage.setItem("kie_ai_api_key", apiKey.trim());
 
     try {
       const response = await fetch("/api/generate", {
@@ -30,7 +42,11 @@ export function GeneratorForm({ onGenerate }: GeneratorFormProps) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ theme: theme.trim(), title: title.trim() }),
+        body: JSON.stringify({
+          apiKey: apiKey.trim(),
+          theme: theme.trim(),
+          title: title.trim(),
+        }),
       });
 
       if (!response.ok) {
@@ -50,8 +66,35 @@ export function GeneratorForm({ onGenerate }: GeneratorFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
+        <label htmlFor="apiKey" className="block text-sm font-medium mb-2">
+          API Key <span className="text-red-500">*</span>
+        </label>
+        <input
+          id="apiKey"
+          type="password"
+          value={apiKey}
+          onChange={(e) => setApiKey(e.target.value)}
+          placeholder="请输入你的 Nano Banana Pro API Key"
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          disabled={generating}
+        />
+        <p className="mt-1 text-sm text-gray-500">
+          从{" "}
+          <a
+            href="https://kie.ai/api-key"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:underline"
+          >
+            https://kie.ai/api-key
+          </a>{" "}
+          获取 API Key，会被保存在浏览器本地
+        </p>
+      </div>
+
+      <div>
         <label htmlFor="theme" className="block text-sm font-medium mb-2">
-          主题/场景
+          主题/场景 <span className="text-red-500">*</span>
         </label>
         <input
           id="theme"
@@ -69,7 +112,7 @@ export function GeneratorForm({ onGenerate }: GeneratorFormProps) {
 
       <div>
         <label htmlFor="title" className="block text-sm font-medium mb-2">
-          小报标题
+          小报标题 <span className="text-red-500">*</span>
         </label>
         <input
           id="title"

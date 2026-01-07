@@ -24,21 +24,7 @@
 npm install
 ```
 
-### 2. 配置环境变量
-
-复制 `.env.example` 为 `.env.local`：
-
-```bash
-cp .env.example .env.local
-```
-
-编辑 `.env.local`，填入你的 API Key：
-
-```env
-KIE_AI_API_KEY=your_api_key_here
-```
-
-### 3. 启动开发服务器
+### 2. 启动开发服务器
 
 ```bash
 npm run dev
@@ -46,19 +32,19 @@ npm run dev
 
 访问 [http://localhost:3000](http://localhost:3000)
 
+### 3. 获取 API Key
+
+1. 访问 [API Key 管理页面](https://kie.ai/api-key)
+2. 注册或登录账号
+3. 获取 API Key
+4. 在网页上输入 API Key（会被保存在浏览器本地）
+
 ### 4. 构建生产版本
 
 ```bash
 npm run build
 npm start
 ```
-
-## 获取 API Key
-
-1. 访问 [API Key 管理页面](https://kie.ai/api-key)
-2. 注册或登录账号
-3. 获取 API Key
-4. 将 API Key 填入 `.env.local` 文件
 
 ## 支持的场景
 

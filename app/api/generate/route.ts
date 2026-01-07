@@ -8,22 +8,13 @@ export async function POST(request: NextRequest) {
   try {
     // 解析请求体
     const body: GenerateRequest = await request.json();
-    const { theme, title } = body;
+    const { apiKey, theme, title } = body;
 
     // 验证参数
-    if (!theme || !title) {
+    if (!apiKey || !theme || !title) {
       return NextResponse.json(
-        { error: "缺少必要参数: theme 和 title" },
+        { error: "缺少必要参数: apiKey, theme 和 title" },
         { status: 400 }
-      );
-    }
-
-    // 获取 API Key
-    const apiKey = process.env.KIE_AI_API_KEY;
-    if (!apiKey) {
-      return NextResponse.json(
-        { error: "服务器配置错误: 缺少 API Key" },
-        { status: 500 }
       );
     }
 

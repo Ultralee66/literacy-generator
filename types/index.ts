@@ -58,6 +58,7 @@ export interface TaskResult {
 
 // 生成请求
 export interface GenerateRequest {
+  apiKey: string;
   theme: string;
   title: string;
 }
